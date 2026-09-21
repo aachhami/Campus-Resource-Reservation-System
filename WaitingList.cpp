@@ -1,30 +1,29 @@
 #include "WaitingList.h"
 #include <iostream>
+#include <stdexcept>
 
 WaitingList::WaitingList() {
-    // Constructor
 }
 
-void WaitingList::addToList(const Reservation& item) {
-    //if resource is not available, add to waiting list
+void WaitingList::addToList(const reservation& item) {
     waitingQueue.push(item);
 }
 
 void WaitingList::removeFromList() {
     if (!waitingQueue.empty()) {
         waitingQueue.pop();
-    } else {
-        cout << "Waiting list is empty. Cannot remove item." << endl;
+    }
+    else {
+        std::cout << "Waiting list is empty." << std::endl;
     }
 }
 
-Reservation WaitingList::getFrontItem() const {
-    if (!waitingQueue.empty()) {
-        return waitingQueue.front();
-    } else {
-        // Return a default-constructed Reservation or handle the error appropriately
-        return Reservation();
+reservation WaitingList::getFrontItem() const {
+    if (waitingQueue.empty()) {
+        throw std::runtime_error("Waiting list is empty.");
     }
+
+    return waitingQueue.front();
 }
 
 bool WaitingList::isListEmpty() const {
@@ -33,14 +32,24 @@ bool WaitingList::isListEmpty() const {
 
 void WaitingList::displayList() const {
     if (waitingQueue.empty()) {
-        cout << "Waiting list is empty." << endl;
+        std::cout << "Waiting list is empty." << std::endl;
         return;
     }
 
-    queue<Reservation> tempQueue = waitingQueue; // Create a copy to display items
-    cout << "Waiting List:" << endl;
+    std::queue<reservation> tempQueue = waitingQueue;
+
+    std::cout << "\n===== Waiting List =====\n";
+
     while (!tempQueue.empty()) {
-        cout << tempQueue.front() << endl;
+        const reservation& item = tempQueue.front();
+
+        std::cout << "Reservation ID: " << item.ReservationID
+                  << " | Student ID: " << item.StudentID
+                  << " | Student Name: " << item.StudentName
+                  << " | Resource ID: " << item.ResourceID
+                  << " | Date: " << item.Date
+                  << '\n';
+
         tempQueue.pop();
     }
 }
