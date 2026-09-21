@@ -1,19 +1,22 @@
 #ifndef WAITINGLIST_H
 #define WAITINGLIST_H
 
+#include"Reservation.h"
+
 #include <queue>
 using namespace std;
 
 class WaitingList {
 private:
-    queue<string> waitingQueue;
+    queue<Reservation> waitingQueue;
 
 public:
     WaitingList();
-    void addToList(const string& item);
+    void addToList(const Reservation& item);
     void removeFromList();
-    string getFrontItem() const;
+    Reservation getFrontItem() const;
     bool isListEmpty() const;
+    void displayList() const;
 };
 
 #endif // WAITINGLIST_H

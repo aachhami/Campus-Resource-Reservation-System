@@ -1,10 +1,12 @@
 #include<iostream>
 #include"Reservation.h"
+#include"WaitingList.h"
 
 
 
 int main() {
 	reservationList list;
+	WaitingList wList;
 	int choice;
 	std::cout << "===== Campus Resource Reservation System =====" << '\n' << '\n';
 	std::cout << "1. View Resources" << '\n';
@@ -41,6 +43,7 @@ int main() {
 	}
 	else if (choice == 4) {
 		std::cout << "Viewing Waiting lists..." << '\n';
+		wList.displayList();
 	}
 	else if (choice == 5) {
 		std::cout << "Undoing Reservation..." << '\n';
