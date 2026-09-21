@@ -11,6 +11,9 @@ int main() {
     reservationList list;
     WaitingList wList;
 
+    // Load existing reservations into the linked list once
+    list.getReserv();
+
     // Resource management object
     ResourceManager resourceManager;
 
@@ -59,7 +62,6 @@ int main() {
 
             std::cout << "\nCreating Reservation...\n";
 
-            list.getReserv();
             list.newReservation();
             list.displayReserv();
         }
@@ -69,7 +71,6 @@ int main() {
             std::cout << "\nCanceling Reservation...\n";
 
             list.cancelReserv();
-            list.getReserv();
             list.displayReserv();
         }
 
