@@ -1,16 +1,19 @@
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <cstdio>
-#include <limits>
-
 #include "Reservation.h"
 #include "WaitingList.h"
+#include "CancellationHistory.h"
 #include "include/ResourceManager.h"
 
+#include <cstdio>
+#include <fstream>
+#include <iostream>
+#include <limits>
+#include <sstream>
 
-// Add a reservation to the end of the linked list
+reservationList::reservationList()
+    : head(nullptr),
+      tail(nullptr) {
+}
+
 void reservationList::addReserv(
     const std::string& ReservationID,
     const std::string& StudentID,
@@ -27,31 +30,73 @@ void reservationList::addReserv(
             Date
         );
 
-    // First reservation in the linked list
     if (head == nullptr) {
+
         head = newReserv;
         tail = newReserv;
     }
     else {
-        // Add to the end of the linked list
+
         tail->next = newReserv;
+
         newReserv->prev = tail;
+
         tail = newReserv;
     }
 }
 
-
-// Display all active reservations
-void reservationList::displayReserv() {
-
-    if (head == nullptr) {
-        std::cout << "\nNo active reservations.\n";
-        return;
-    }
+reservation* reservationList::findReservation(
+    const std::string& reservationID) {
 
     reservation* current = head;
 
-    std::cout << "\n===== Active Reservations =====\n";
+    while (current != nullptr) {
+
+        if (current->ReservationID ==
+            reservationID) {
+
+            return current;
+        }
+
+        current = current->next;
+    }
+
+    return nullptr;
+}
+
+bool reservationList::reservationIDExists(
+    const std::string& reservationID) const {
+
+    reservation* current = head;
+
+    while (current != nullptr) {
+
+        if (current->ReservationID ==
+            reservationID) {
+
+            return true;
+        }
+
+        current = current->next;
+    }
+
+    return false;
+}
+
+void reservationList::displayReserv() {
+
+    if (head == nullptr) {
+
+        std::cout
+            << "\nNo active reservations.\n";
+
+        return;
+    }
+
+    std::cout
+        << "\n===== Active Reservations =====\n";
+
+    reservation* current = head;
 
     while (current != nullptr) {
 
@@ -66,15 +111,17 @@ void reservationList::displayReserv() {
     }
 }
 
-
-// Load professor-provided reservations from file
 void reservationList::getReserv() {
 
-    std::ifstream file("data/reservations.txt");
+    std::ifstream file(
+        "data/reservations.txt"
+    );
 
     if (!file.is_open()) {
+
         std::cout
             << "Error: Could not open reservation file.\n";
+
         return;
     }
 
@@ -88,202 +135,76 @@ void reservationList::getReserv() {
 
         std::stringstream ss(line);
 
-        std::string ReservationID;
-        std::string StudentID;
-        std::string StudentName;
-        std::string ResourceID;
-        std::string Date;
+        std::string reservationID;
+        std::string studentID;
+        std::string studentName;
+        std::string resourceID;
+        std::string date;
 
-        std::getline(ss, ReservationID, '|');
-        std::getline(ss, StudentID, '|');
-        std::getline(ss, StudentName, '|');
-        std::getline(ss, ResourceID, '|');
-        std::getline(ss, Date);
+        std::getline(
+            ss,
+            reservationID,
+            '|'
+        );
+
+        std::getline(
+            ss,
+            studentID,
+            '|'
+        );
+
+        std::getline(
+            ss,
+            studentName,
+            '|'
+        );
+
+        std::getline(
+            ss,
+            resourceID,
+            '|'
+        );
+
+        std::getline(
+            ss,
+            date
+        );
 
         addReserv(
-            ReservationID,
-            StudentID,
-            StudentName,
-            ResourceID,
-            Date
+            reservationID,
+            studentID,
+            studentName,
+            resourceID,
+            date
         );
     }
-
-    file.close();
 }
 
+bool reservationList::appendReservationToFile(
+    const reservation& item) {
 
-// Create a new reservation.
-// If the resource is unavailable, place the request
-// into the FIFO waiting list.
-void reservationList::newReservation(
-    ResourceManager& resourceManager,
-    WaitingList& waitingList) {
-
-    std::string ReservationID;
-    std::string StudentID;
-    std::string StudentName;
-    std::string ResourceID;
-    std::string Date;
-
-
-    std::cout << "Enter Reservation ID: ";
-    std::cin >> ReservationID;
-
-    std::cout << "Enter Student ID: ";
-    std::cin >> StudentID;
-
-    std::cout << "Enter Student Name: ";
-
-    std::cin.ignore(
-        std::numeric_limits<std::streamsize>::max(),
-        '\n'
-    );
-
-    std::getline(
-        std::cin,
-        StudentName
-    );
-
-    std::cout << "Enter Resource ID: ";
-    std::cin >> ResourceID;
-
-    std::cout << "Enter Date (MM/DD/YYYY): ";
-    std::cin >> Date;
-
-
-    // Find the requested resource
-    Resource* resource =
-        resourceManager.findResource(ResourceID);
-
-
-    // Resource ID does not exist
-    if (resource == nullptr) {
-
-        std::cout
-            << "Resource ID not found.\n";
-
-        return;
-    }
-
-
-    // Resource is unavailable:
-    // put the request into the waiting queue
-    if (resource->getAvailability() != "Available") {
-
-        reservation waitingReservation(
-            ReservationID,
-            StudentID,
-            StudentName,
-            ResourceID,
-            Date
-        );
-
-        waitingList.addToList(
-            waitingReservation
-        );
-
-        std::cout
-            << "Resource is unavailable.\n";
-
-        std::cout
-            << "Reservation request added to waiting list.\n";
-
-        return;
-    }
-
-
-    // Save the active reservation to the file
     std::ofstream file(
         "data/reservations.txt",
         std::ios::app
     );
 
     if (!file.is_open()) {
-
-        std::cout
-            << "Error: Could not update reservation file.\n";
-
-        return;
+        return false;
     }
 
     file
-        << ReservationID << "|"
-        << StudentID << "|"
-        << StudentName << "|"
-        << ResourceID << "|"
-        << Date << '\n';
+        << item.ReservationID << "|"
+        << item.StudentID << "|"
+        << item.StudentName << "|"
+        << item.ResourceID << "|"
+        << item.Date << '\n';
 
-    file.close();
-
-
-    // Add reservation to the active linked list
-    addReserv(
-        ReservationID,
-        StudentID,
-        StudentName,
-        ResourceID,
-        Date
-    );
-
-
-    // The resource is now reserved
-    resourceManager.updateAvailability(
-        ResourceID,
-        "Unavailable"
-    );
-
-
-    std::cout
-        << "Reservation created successfully.\n";
+    return true;
 }
 
+bool reservationList::removeReservationFromFile(
+    const std::string& reservationID) {
 
-// Cancel a reservation.
-//
-// After cancellation:
-// 1. Check whether somebody is waiting for that resource.
-// 2. If yes, assign it to the first matching person.
-// 3. If nobody is waiting, mark the resource Available.
-void reservationList::cancelReserv(
-    ResourceManager& resourceManager,
-    WaitingList& waitingList) {
-
-    std::cout
-        << "Enter Reservation ID to cancel: ";
-
-    std::string ReservationID;
-    std::cin >> ReservationID;
-
-
-    // Find reservation in linked list
-    reservation* current = head;
-
-    while (
-        current != nullptr &&
-        current->ReservationID != ReservationID
-    ) {
-
-        current = current->next;
-    }
-
-
-    // Reservation was not found
-    if (current == nullptr) {
-
-        std::cout
-            << "Reservation ID not found.\n";
-
-        return;
-    }
-
-
-    // Save the Resource ID before deleting the node
-    std::string cancelledResourceID =
-        current->ResourceID;
-
-
-    // First update reservations.txt
     std::ifstream file(
         "data/reservations.txt"
     );
@@ -292,16 +213,11 @@ void reservationList::cancelReserv(
         "data/reservations_temp.txt"
     );
 
-
     if (!file.is_open() ||
         !tempFile.is_open()) {
 
-        std::cout
-            << "Error updating reservation file.\n";
-
-        return;
+        return false;
     }
-
 
     std::string line;
 
@@ -317,10 +233,8 @@ void reservationList::cancelReserv(
             '|'
         );
 
-
-        // Keep every reservation except
-        // the one being cancelled
-        if (fileReservationID != ReservationID) {
+        if (fileReservationID !=
+            reservationID) {
 
             tempFile
                 << line
@@ -328,29 +242,42 @@ void reservationList::cancelReserv(
         }
     }
 
-
     file.close();
     tempFile.close();
 
+    if (std::remove(
+            "data/reservations.txt"
+        ) != 0) {
 
-    // Replace the old reservation file
-    std::remove(
-        "data/reservations.txt"
-    );
+        std::remove(
+            "data/reservations_temp.txt"
+        );
+
+        return false;
+    }
 
     if (std::rename(
             "data/reservations_temp.txt",
             "data/reservations.txt"
         ) != 0) {
 
-        std::cout
-            << "Error replacing reservation file.\n";
-
-        return;
+        return false;
     }
 
+    return true;
+}
 
-    // Remove reservation from linked list
+bool reservationList::removeReservationFromList(
+    const std::string& reservationID) {
+
+    reservation* current =
+        findReservation(reservationID);
+
+    if (current == nullptr) {
+
+        return false;
+    }
+
     if (current->prev != nullptr) {
 
         current->prev->next =
@@ -358,10 +285,8 @@ void reservationList::cancelReserv(
     }
     else {
 
-        // Current node is the head
         head = current->next;
     }
-
 
     if (current->next != nullptr) {
 
@@ -370,108 +295,390 @@ void reservationList::cancelReserv(
     }
     else {
 
-        // Current node is the tail
         tail = current->prev;
     }
 
-
     delete current;
 
+    return true;
+}
+
+void reservationList::newReservation(
+    ResourceManager& resourceManager,
+    WaitingList& waitingList) {
+
+    std::string reservationID;
+    std::string studentID;
+    std::string studentName;
+    std::string resourceID;
+    std::string date;
 
     std::cout
-        << "Reservation "
-        << ReservationID
-        << " canceled successfully.\n";
+        << "Enter Reservation ID: ";
 
+    std::cin >> reservationID;
 
-    // Check the FIFO waiting list for the
-    // first person waiting for this resource
-    reservation nextWaitingReservation;
-
-
-    if (waitingList.getNextForResource(
-            cancelledResourceID,
-            nextWaitingReservation
+    if (reservationIDExists(
+            reservationID
+        ) ||
+        waitingList.containsReservationID(
+            reservationID
         )) {
 
+        std::cout
+            << "Error: Reservation ID already exists.\n";
 
-        // Save automatically assigned reservation
-        // to reservations.txt
-        std::ofstream reservationFile(
-            "data/reservations.txt",
-            std::ios::app
+        return;
+    }
+
+    std::cout
+        << "Enter Student ID: ";
+
+    std::cin >> studentID;
+
+    std::cout
+        << "Enter Student Name: ";
+
+    std::cin.ignore(
+        std::numeric_limits<
+            std::streamsize>::max(),
+        '\n'
+    );
+
+    std::getline(
+        std::cin,
+        studentName
+    );
+
+    std::cout
+        << "Enter Resource ID: ";
+
+    std::cin >> resourceID;
+
+    Resource* resource =
+        resourceManager.findResource(
+            resourceID
         );
 
+    if (resource == nullptr) {
 
-        if (!reservationFile.is_open()) {
+        std::cout
+            << "Error: Resource ID not found.\n";
+
+        return;
+    }
+
+    std::cout
+        << "Enter Date (MM/DD/YYYY): ";
+
+    std::cin >> date;
+
+    reservation request(
+        reservationID,
+        studentID,
+        studentName,
+        resourceID,
+        date
+    );
+
+    if (resource->getAvailability() !=
+        "Available") {
+
+        waitingList.addToList(
+            request
+        );
+
+        std::cout
+            << "Resource is unavailable.\n";
+
+        std::cout
+            << "Reservation request added to waiting list.\n";
+
+        return;
+    }
+
+    if (!appendReservationToFile(
+            request
+        )) {
+
+        std::cout
+            << "Error: Could not update reservation file.\n";
+
+        return;
+    }
+
+    addReserv(
+        request.ReservationID,
+        request.StudentID,
+        request.StudentName,
+        request.ResourceID,
+        request.Date
+    );
+
+    resourceManager.updateAvailability(
+        resourceID,
+        "Unavailable"
+    );
+
+    std::cout
+        << "Reservation created successfully.\n";
+}
+
+void reservationList::cancelReserv(
+    ResourceManager& resourceManager,
+    WaitingList& waitingList,
+    CancellationHistory& cancellationHistory) {
+
+    std::string reservationID;
+
+    std::cout
+        << "Enter Reservation ID to cancel: ";
+
+    std::cin >> reservationID;
+
+    reservation* current =
+        findReservation(
+            reservationID
+        );
+
+    if (current == nullptr) {
+
+        std::cout
+            << "Reservation ID not found.\n";
+
+        return;
+    }
+
+    reservation cancelled =
+        *current;
+
+    if (!removeReservationFromFile(
+            reservationID
+        )) {
+
+        std::cout
+            << "Error updating reservation file.\n";
+
+        return;
+    }
+
+    removeReservationFromList(
+        reservationID
+    );
+
+    reservation assignedFromWaiting;
+
+    bool hadAutomaticAssignment =
+        waitingList.getNextForResource(
+            cancelled.ResourceID,
+            assignedFromWaiting
+        );
+
+    if (hadAutomaticAssignment) {
+
+        if (!appendReservationToFile(
+                assignedFromWaiting
+            )) {
+
+            waitingList.addToFront(
+                assignedFromWaiting
+            );
+
+            appendReservationToFile(
+                cancelled
+            );
+
+            addReserv(
+                cancelled.ReservationID,
+                cancelled.StudentID,
+                cancelled.StudentName,
+                cancelled.ResourceID,
+                cancelled.Date
+            );
 
             std::cout
                 << "Error: Could not save waiting-list reservation.\n";
 
-            // Put the request back into the waiting list
-            waitingList.addToList(
-                nextWaitingReservation
-            );
-
             return;
         }
 
-
-        reservationFile
-            << nextWaitingReservation.ReservationID << "|"
-            << nextWaitingReservation.StudentID << "|"
-            << nextWaitingReservation.StudentName << "|"
-            << nextWaitingReservation.ResourceID << "|"
-            << nextWaitingReservation.Date << '\n';
-
-
-        reservationFile.close();
-
-
-        // Add automatically assigned reservation
-        // to the active linked list
         addReserv(
-            nextWaitingReservation.ReservationID,
-            nextWaitingReservation.StudentID,
-            nextWaitingReservation.StudentName,
-            nextWaitingReservation.ResourceID,
-            nextWaitingReservation.Date
+            assignedFromWaiting.ReservationID,
+            assignedFromWaiting.StudentID,
+            assignedFromWaiting.StudentName,
+            assignedFromWaiting.ResourceID,
+            assignedFromWaiting.Date
         );
 
-
-        // Resource remains unavailable because it
-        // was immediately assigned to another student
         resourceManager.updateAvailability(
-            cancelledResourceID,
+            cancelled.ResourceID,
             "Unavailable"
         );
+    }
+    else {
 
+        resourceManager.updateAvailability(
+            cancelled.ResourceID,
+            "Available"
+        );
+    }
+
+    cancellationHistory.pushCancellation(
+        cancelled,
+        hadAutomaticAssignment,
+        assignedFromWaiting
+    );
+
+    std::cout
+        << "Reservation "
+        << reservationID
+        << " canceled successfully.\n";
+
+    std::cout
+        << "Added to cancellation history.\n";
+
+    if (hadAutomaticAssignment) {
 
         std::cout
             << "Resource "
-            << cancelledResourceID
+            << cancelled.ResourceID
             << " automatically assigned to "
-            << nextWaitingReservation.StudentName
+            << assignedFromWaiting.StudentName
             << " from the waiting list.\n";
     }
     else {
 
-        // Nobody is waiting, so resource becomes available
-        resourceManager.updateAvailability(
-            cancelledResourceID,
-            "Available"
-        );
-
-
         std::cout
             << "Resource "
-            << cancelledResourceID
+            << cancelled.ResourceID
             << " is now available.\n";
     }
 }
 
+void reservationList::undoCancellation(
+    ResourceManager& resourceManager,
+    WaitingList& waitingList,
+    CancellationHistory& cancellationHistory) {
 
-// Destructor - delete all linked-list nodes
+    if (cancellationHistory.isEmpty()) {
+
+        std::cout
+            << "Cancellation history is empty. Nothing to undo.\n";
+
+        return;
+    }
+
+    CancellationRecord record =
+        cancellationHistory
+            .getLatestCancellation();
+
+    const reservation& cancelled =
+        record.cancelledReservation;
+
+    if (reservationIDExists(
+            cancelled.ReservationID
+        ) ||
+        waitingList.containsReservationID(
+            cancelled.ReservationID
+        )) {
+
+        std::cout
+            << "Cannot undo: Reservation ID "
+            << cancelled.ReservationID
+            << " is already in use.\n";
+
+        return;
+    }
+
+    if (record.hadAutomaticAssignment) {
+
+        const reservation& assigned =
+            record.automaticAssignment;
+
+        if (!removeReservationFromFile(
+                assigned.ReservationID
+            )) {
+
+            std::cout
+                << "Error: Could not reverse automatic assignment.\n";
+
+            return;
+        }
+
+        if (!removeReservationFromList(
+                assigned.ReservationID
+            )) {
+
+            appendReservationToFile(
+                assigned
+            );
+
+            std::cout
+                << "Error: Could not reverse automatic assignment.\n";
+
+            return;
+        }
+
+        waitingList.addToFront(
+            assigned
+        );
+    }
+
+    if (!appendReservationToFile(
+            cancelled
+        )) {
+
+        if (record.hadAutomaticAssignment) {
+
+            reservation assigned =
+                record.automaticAssignment;
+
+            waitingList.getNextForResource(
+                assigned.ResourceID,
+                assigned
+            );
+
+            appendReservationToFile(
+                record.automaticAssignment
+            );
+
+            addReserv(
+                record.automaticAssignment.ReservationID,
+                record.automaticAssignment.StudentID,
+                record.automaticAssignment.StudentName,
+                record.automaticAssignment.ResourceID,
+                record.automaticAssignment.Date
+            );
+        }
+
+        std::cout
+            << "Error: Could not restore cancelled reservation.\n";
+
+        return;
+    }
+
+    addReserv(
+        cancelled.ReservationID,
+        cancelled.StudentID,
+        cancelled.StudentName,
+        cancelled.ResourceID,
+        cancelled.Date
+    );
+
+    resourceManager.updateAvailability(
+        cancelled.ResourceID,
+        "Unavailable"
+    );
+
+    cancellationHistory
+        .popLatestCancellation();
+
+    std::cout
+        << "Reservation "
+        << cancelled.ReservationID
+        << " restored successfully.\n";
+}
+
 reservationList::~reservationList() {
 
     reservation* current = head;

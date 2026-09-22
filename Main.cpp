@@ -3,45 +3,51 @@
 
 #include "Reservation.h"
 #include "WaitingList.h"
+#include "CancellationHistory.h"
 #include "include/ResourceManager.h"
 
 int main() {
 
-    // Reservation and waiting-list objects
     reservationList list;
-    WaitingList wList;
 
-    // Load existing reservations into the linked list
-    list.getReserv();
+    WaitingList waitingList;
 
-    // Resource management object
+    CancellationHistory cancellationHistory;
+
     ResourceManager resourceManager;
 
-    // Load resources from file
-    if (!resourceManager.loadResources("data/resources.txt")) {
-        std::cout << "Warning: Resource file could not be loaded.\n";
+    list.getReserv();
+
+    if (!resourceManager.loadResources(
+            "data/resources.txt"
+        )) {
+
+        std::cout
+            << "Warning: Resource file could not be loaded.\n";
     }
 
     int choice = 0;
 
     do {
-        std::cout << "\n";
-        std::cout << "===== Campus Resource Reservation System =====\n\n";
 
-        std::cout << "1. View Resources\n";
-        std::cout << "2. Create Reservation\n";
-        std::cout << "3. Cancel Reservation\n";
-        std::cout << "4. View Waiting Lists\n";
-        std::cout << "5. Undo Cancellation\n";
-        std::cout << "6. Search Reservations\n";
-        std::cout << "7. Sort Resources\n";
-        std::cout << "8. Generate Report\n";
-        std::cout << "9. Exit\n\n";
+        std::cout
+            << "\n===== Campus Resource Reservation System =====\n\n"
 
-        std::cout << "Enter Choice: ";
+            << "1. View Resources\n"
+            << "2. Create Reservation\n"
+            << "3. Cancel Reservation\n"
+            << "4. View Waiting Lists\n"
+            << "5. Undo Cancellation\n"
+            << "6. Search Reservations\n"
+            << "7. Sort Resources\n"
+            << "8. Generate Report\n"
+            << "9. Exit\n\n"
 
-        // Validate menu input
-        while (!(std::cin >> choice) || choice < 1 || choice > 9) {
+            << "Enter Choice: ";
+
+        while (!(std::cin >> choice) ||
+               choice < 1 ||
+               choice > 9) {
 
             std::cout
                 << "Invalid choice. Please enter a number from 1 to 9: ";
@@ -49,100 +55,108 @@ int main() {
             std::cin.clear();
 
             std::cin.ignore(
-                std::numeric_limits<std::streamsize>::max(),
+                std::numeric_limits<
+                    std::streamsize>::max(),
                 '\n'
             );
         }
 
+        switch (choice) {
 
-        // Option 1 - View Resources
-        if (choice == 1) {
+        case 1:
 
-            std::cout << "\nViewing Resources...\n";
+            std::cout
+                << "\nViewing Resources...\n";
 
-            resourceManager.displayResources();
-        }
+            resourceManager
+                .displayResources();
 
+            break;
 
-        // Option 2 - Create Reservation
-        else if (choice == 2) {
+        case 2:
 
-            std::cout << "\nCreating Reservation...\n";
+            std::cout
+                << "\nCreating Reservation...\n";
 
             list.newReservation(
                 resourceManager,
-                wList
+                waitingList
             );
 
             list.displayReserv();
-        }
 
+            break;
 
-        // Option 3 - Cancel Reservation
-        else if (choice == 3) {
+        case 3:
 
-            std::cout << "\nCanceling Reservation...\n";
+            std::cout
+                << "\nCanceling Reservation...\n";
 
-            list.cancelReserv(resourceManager, wList);
+            list.cancelReserv(
+                resourceManager,
+                waitingList,
+                cancellationHistory
+            );
 
             list.displayReserv();
-        }
 
+            break;
 
-        // Option 4 - View Waiting Lists
-        else if (choice == 4) {
+        case 4:
 
-            std::cout << "\nViewing Waiting Lists...\n";
+            std::cout
+                << "\nViewing Waiting Lists...\n";
 
-            wList.displayList();
-        }
+            waitingList.displayList();
 
+            break;
 
-        // Option 5 - Undo Cancellation
-        else if (choice == 5) {
+        case 5:
 
-            std::cout << "\nUndoing Cancellation...\n";
+            std::cout
+                << "\nUndoing Cancellation...\n";
 
-            // Cancellation-history stack
-            // will be connected here.
-        }
+            cancellationHistory
+                .displayHistory();
 
+            list.undoCancellation(
+                resourceManager,
+                waitingList,
+                cancellationHistory
+            );
 
-        // Option 6 - Search Reservations
-        else if (choice == 6) {
+            break;
 
-            std::cout << "\nSearching Reservations...\n";
+        case 6:
 
-            // Search functionality
-            // will be connected here.
-        }
+            std::cout
+                << "\nSearch Reservations will be implemented "
+                << "for the final project.\n";
 
+            break;
 
-        // Option 7 - Sort Resources
-        else if (choice == 7) {
+        case 7:
 
-            std::cout << "\nSorting Resources...\n";
+            std::cout
+                << "\nSort Resources will be implemented "
+                << "for the final project.\n";
 
-            // Sorting functionality
-            // will be connected here.
-        }
+            break;
 
+        case 8:
 
-        // Option 8 - Generate Report
-        else if (choice == 8) {
+            std::cout
+                << "\nGenerate Report will be implemented "
+                << "for the final project.\n";
 
-            std::cout << "\nGenerating Report...\n";
+            break;
 
-            // Report functionality
-            // will be connected here.
-        }
-
-
-        // Option 9 - Exit
-        else if (choice == 9) {
+        case 9:
 
             std::cout
                 << "\nExiting Campus Resource Reservation System...\n";
+
+            break;
         }
 
     } while (choice != 9);
