@@ -1,3 +1,4 @@
+// Implements FIFO waiting-list operations and automatic resource assignment processing.
 #include "WaitingList.h"
 
 #include <iostream>

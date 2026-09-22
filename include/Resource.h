@@ -1,3 +1,4 @@
+// Defines a campus resource and its ID, name, type, and availability information.
 #ifndef RESOURCE_H
 #define RESOURCE_H
 

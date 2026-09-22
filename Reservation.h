@@ -1,3 +1,4 @@
+// Defines the Reservation data structure and doubly linked list used for active reservations.
 #pragma once
 
 #include <string>

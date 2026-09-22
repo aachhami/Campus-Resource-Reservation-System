@@ -1,3 +1,4 @@
+// Implements the Resource class constructors, accessors, and availability update operation.
 #include "../include/Resource.h"
 
 Resource::Resource()

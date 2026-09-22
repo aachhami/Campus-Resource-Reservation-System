@@ -1,3 +1,4 @@
+// Defines the stack used to store cancelled reservations for LIFO undo operations.
 #pragma once
 
 #include <stack>

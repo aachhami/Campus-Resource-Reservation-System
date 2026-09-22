@@ -1,3 +1,4 @@
+// Implements cancellation-history stack operations, including display and most-recent cancellation access.
 #include "CancellationHistory.h"
 
 #include <iostream>

@@ -1,3 +1,4 @@
+// Main program for the Campus Resource Reservation System command-line interface.
 #include <iostream>
 #include <limits>
 
