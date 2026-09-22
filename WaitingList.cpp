@@ -1,54 +1,87 @@
 #include "WaitingList.h"
 
 #include <iostream>
-#include <queue>
 #include <stdexcept>
-
 
 WaitingList::WaitingList() {
 }
 
+void WaitingList::addToList(
+    const reservation& item) {
 
-// Add a reservation request to the back of the FIFO queue
-void WaitingList::addToList(const reservation& item) {
     waitingQueue.push(item);
 }
 
+void WaitingList::addToFront(
+    const reservation& item) {
 
-// Remove the reservation at the front of the queue
-void WaitingList::removeFromList() {
+    std::queue<reservation> temp;
 
-    if (!waitingQueue.empty()) {
-        waitingQueue.pop();
+    temp.push(item);
+
+    std::queue<reservation> copy =
+        waitingQueue;
+
+    while (!copy.empty()) {
+
+        temp.push(copy.front());
+
+        copy.pop();
     }
-    else {
-        std::cout << "Waiting list is empty." << std::endl;
-    }
+
+    waitingQueue = temp;
 }
 
+void WaitingList::removeFromList() {
 
-// Get the reservation at the front of the queue
+    if (waitingQueue.empty()) {
+
+        std::cout
+            << "Waiting list is empty.\n";
+
+        return;
+    }
+
+    waitingQueue.pop();
+}
+
 reservation WaitingList::getFrontItem() const {
 
     if (waitingQueue.empty()) {
-        throw std::runtime_error("Waiting list is empty.");
+
+        throw std::runtime_error(
+            "Waiting list is empty."
+        );
     }
 
     return waitingQueue.front();
 }
 
-
-// Check whether the waiting list is empty
 bool WaitingList::isListEmpty() const {
+
     return waitingQueue.empty();
 }
 
+bool WaitingList::containsReservationID(
+    const std::string& reservationID) const {
 
-// Find and remove the FIRST person waiting
-// for a particular resource.
-//
-// All other reservations remain in their
-// original FIFO order.
+    std::queue<reservation> temp =
+        waitingQueue;
+
+    while (!temp.empty()) {
+
+        if (temp.front().ReservationID ==
+            reservationID) {
+
+            return true;
+        }
+
+        temp.pop();
+    }
+
+    return false;
+}
+
 bool WaitingList::getNextForResource(
     const std::string& resourceID,
     reservation& nextReservation) {
@@ -64,51 +97,44 @@ bool WaitingList::getNextForResource(
 
         waitingQueue.pop();
 
-        // Take only the first matching reservation
         if (!found &&
             current.ResourceID == resourceID) {
 
             nextReservation = current;
+
             found = true;
         }
         else {
 
-            // Keep all other reservations
             tempQueue.push(current);
         }
     }
 
-    // Restore remaining reservations
     waitingQueue = tempQueue;
 
     return found;
 }
 
-
-// Display all reservations currently waiting
 void WaitingList::displayList() const {
 
     if (waitingQueue.empty()) {
 
         std::cout
-            << "Waiting list is empty."
-            << std::endl;
+            << "Waiting list is empty.\n";
 
         return;
     }
 
-    // Copy the queue so displaying it does not
-    // remove anything from the real waiting queue.
-    std::queue<reservation> tempQueue =
+    std::queue<reservation> temp =
         waitingQueue;
 
     std::cout
         << "\n===== Waiting List =====\n";
 
-    while (!tempQueue.empty()) {
+    while (!temp.empty()) {
 
-        reservation item =
-            tempQueue.front();
+        const reservation& item =
+            temp.front();
 
         std::cout
             << "Reservation ID: "
@@ -125,9 +151,8 @@ void WaitingList::displayList() const {
 
             << " | Date: "
             << item.Date
-
             << '\n';
 
-        tempQueue.pop();
+        temp.pop();
     }
 }
