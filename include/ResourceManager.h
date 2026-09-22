@@ -1,3 +1,4 @@
+// Defines resource inventory management using a vector of Resource objects.
 #ifndef RESOURCEMANAGER_H
 #define RESOURCEMANAGER_H
 

@@ -1,3 +1,4 @@
+// Implements resource file loading, display, lookup, and availability updates.
 #include "../include/ResourceManager.h"
 
 #include <fstream>

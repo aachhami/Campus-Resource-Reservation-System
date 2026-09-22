@@ -1,3 +1,4 @@
+// Implements reservation loading, creation, cancellation, linked-list operations, and undo functionality.
 #include "Reservation.h"
 #include "WaitingList.h"
 #include "CancellationHistory.h"

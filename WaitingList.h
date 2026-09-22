@@ -1,3 +1,4 @@
+// Defines the FIFO waiting-list queue used for unavailable resource requests.
 #pragma once
 
 #include <queue>
