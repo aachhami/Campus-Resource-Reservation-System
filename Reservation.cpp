@@ -181,6 +181,39 @@ void reservationList::getReserv() {
     }
 }
 
+// Linear search for an active reservation by its ID.
+void reservationList::searchReservation() {
+
+    std::string reservationID;
+
+    std::cout << "\nEnter Reservation ID to search: ";
+    std::cin >> reservationID;
+
+    reservation* result = findReservation(reservationID);
+
+    if (result == nullptr) {
+        std::cout << "\nReservation not found.\n";
+        return;
+    }
+
+    std::cout << "\n===== Reservation Found =====\n";
+
+    std::cout << "Reservation ID: "
+              << result->ReservationID << '\n';
+
+    std::cout << "Student ID: "
+              << result->StudentID << '\n';
+
+    std::cout << "Student Name: "
+              << result->StudentName << '\n';
+
+    std::cout << "Resource ID: "
+              << result->ResourceID << '\n';
+
+    std::cout << "Reservation Date: "
+              << result->Date << '\n';
+}
+
 bool reservationList::appendReservationToFile(
     const reservation& item) {
 

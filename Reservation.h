@@ -111,6 +111,8 @@ public:
 
     void getReserv();
 
+    void searchReservation();
+
     bool reservationIDExists(
         const std::string& reservationID
     ) const;

@@ -130,11 +130,11 @@ int main() {
 
         case 6:
 
-            std::cout
-                << "\nSearch Reservations will be implemented "
-                << "for the final project.\n";
+    std::cout << "\nSearching Reservations...\n";
 
-            break;
+    list.searchReservation();
+
+    break;
 
         case 7:
 
