@@ -138,11 +138,11 @@ int main() {
 
         case 7:
 
-            std::cout
-                << "\nSort Resources will be implemented "
-                << "for the final project.\n";
+    std::cout << "\nSorting Resources...\n";
 
-            break;
+    resourceManager.sortResourcesByName();
+
+    break;
 
         case 8:
 
