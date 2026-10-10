@@ -1,6 +1,6 @@
 # Campus Resource Reservation System
 
-## Project 1 - Milestone 1
+## Project 1 - Final Submission
 
 The Campus Resource Reservation System is a C++ command-line application
 for managing campus resources and student reservations.
@@ -9,7 +9,7 @@ The project demonstrates object-oriented programming and the use of
 fundamental data structures including vectors, linked lists, queues,
 and stacks.
 
-## Milestone 1 Features
+## Implemented Features
 
 The current Milestone 1 implementation supports:
 
@@ -30,8 +30,24 @@ The current Milestone 1 implementation supports:
 - Handling empty waiting lists and cancellation histories
 - Validating menu selections
 
-Search, sorting, and report-generation functionality will be implemented
-as part of the final project requirements.
+### Final Project Features
+
+**Option 6 — Search Reservations**
+- Implements manual linear search using the doubly linked list.
+- Searches for a reservation using its reservation ID.
+- Displays reservation details or a not-found message.
+
+**Option 7 — Sort Resources**
+- Implements merge sort manually without using std::sort().
+- Sorts resources alphabetically by resource name.
+- Uses O(n log n) time and O(n) additional space.
+
+**Option 8 — Generate Report**
+- Displays the total number of active reservations.
+- Shows active reservation counts for each resource.
+- Identifies the most requested resources.
+- Displays waiting-list statistics for each resource.
+- Generates reports using the system's current data.
 
 ## Data Structures
 
@@ -108,8 +124,17 @@ The command-line interface contains the following menu:
 9. Exit
 ```
 
-For Milestone 1, options 1 through 5 and 9 are used. Search, sorting,
-and report generation are reserved for the final project.
+All nine menu options are integrated into the final project.
+
+- Option 1: Display all campus resources and their availability.
+- Option 2: Create a reservation or join the waiting list.
+- Option 3: Cancel an active reservation.
+- Option 4: Display waiting-list requests.
+- Option 5: Undo the most recent cancellation.
+- Option 6: Search for a reservation by ID using linear search.
+- Option 7: Sort resources alphabetically using merge sort.
+- Option 8: Generate reservation, utilization, popularity, and waiting-list reports.
+- Option 9: Exit the program.
 
 ## Project Files
 
@@ -158,7 +183,9 @@ the files inside the `data` directory can be located correctly.
 
 ## Testing
 
-Milestone 1 testing includes:
+### Milestone 1 Test Cases
+
+The following test cases were included during Milestone 1:
 
 - Loading the provided resource file
 - Loading the provided reservation file
@@ -175,6 +202,30 @@ Milestone 1 testing includes:
 - Handling an empty waiting queue
 - Handling an empty cancellation stack
 - Handling invalid menu input
+
+### Final Project Test Results
+
+The following tests were performed on the final project:
+
+| Test | Result |
+|------|--------|
+| Compile the merged project using C++17 | Passed |
+| Search for existing reservation ID 301 | Passed |
+| Search for nonexistent reservation ID 999 | Passed |
+| Sort 20 resources alphabetically using merge sort | Passed |
+| Generate report with 20 active reservations | Passed |
+| Display utilization statistics for all 20 resources | Passed |
+| Identify most requested resources | Passed |
+| Add reservation 999 to the waiting list for R103 | Passed |
+| Verify R103 has 1 waiting request | Passed |
+| Verify R103 has 3 total requests | Passed |
+| Return to the main menu after generating reports | Passed |
+| Exit the program normally | Passed |
+
+All final-project tests listed above were performed locally using WSL.
+
+Final-project compilation and execution on UNT CELL are still pending verification.
+
 
 ## Complexity Analysis
 

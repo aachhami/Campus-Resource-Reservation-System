@@ -1,5 +1,5 @@
 # Campus Resource Reservation System
-## Milestone 1 - Complexity Analysis
+## Final Project - Complexity Analysis
 
 This document analyzes the time complexity of the main data structure
 operations used in the Campus Resource Reservation System.
@@ -76,13 +76,101 @@ resource vector can require O(r).
 Therefore, the complete worst-case undo operation is O(n + w + r),
 while the stack push, top, and pop operations themselves are O(1).
 
+### 5. Linear Search - O(n)
+
+The system implements manual linear search to find a reservation
+by its reservation ID.
+
+Active reservations are stored in a doubly linked list. The search
+algorithm starts at the head of the list and examines each node
+until it finds the requested reservation ID or reaches the end.
+
+Best Case: O(1)
+The requested reservation is located at the beginning of the list.
+
+Average Case: O(n)
+The algorithm examines a portion of the reservation list.
+
+Worst Case: O(n)
+The requested reservation is at the end or does not exist.
+
+Space Complexity: O(1)
+The algorithm uses a constant amount of additional memory.
+
+This algorithm is implemented in the reservation search functionality
+accessed through menu Option 6.
+
+### 6. Merge Sort - O(r log r)
+
+The system implements merge sort manually to arrange campus
+resources alphabetically by resource name.
+
+The algorithm divides the resource vector into smaller sections,
+recursively sorts each section, and merges the sorted sections.
+
+Best Case: O(r log r)
+Average Case: O(r log r)
+Worst Case: O(r log r)
+
+Merge sort performs logarithmic levels of division and processes
+the resources during merging at each level.
+
+Space Complexity: O(r)
+
+The algorithm requires additional temporary storage during merging.
+
+This algorithm is implemented in ResourceManager and accessed
+through menu Option 7.
+
+### 7. Report Generation
+
+The system generates reports using the current reservation,
+resource, and waiting-list data.
+
+Active Reservation Statistics:
+Time Complexity: O(n)
+Space Complexity: O(1)
+
+The program traverses the doubly linked list once to count
+all active reservations.
+
+Resource Utilization:
+Time Complexity: O(r * n)
+Space Complexity: O(1)
+
+For each resource, the program traverses the active
+reservation list to count matching reservations.
+
+Most Requested Resources:
+Time Complexity: O(r * (n + w))
+Space Complexity: O(w)
+
+For each resource, the program counts active reservations
+and waiting-list requests. Counting waiting requests
+requires copying and traversing the queue.
+
+Waiting-List Statistics:
+Time Complexity: O(w log w)
+Space Complexity: O(w)
+
+The program copies the waiting queue and uses a map
+to count requests for each resource.
+
+These reports are accessed through menu Option 8.
+
 ## Summary
 
-| Operation | Time Complexity |
-|---|---|
-| Linked-list reservation insertion | O(1) |
-| Reservation removal/search | O(n) |
-| Waiting-list enqueue | O(1) |
-| Waiting-list processing for a resource | O(w) |
-| Cancellation stack push/top/pop | O(1) |
-| Complete undo cancellation | O(n + w + r) |
+| Operation | Time Complexity | Space Complexity |
+|---|---|---|
+| Linked-list reservation insertion | O(1) | O(1) |
+| Reservation removal/search | O(n) | O(1) |
+| Waiting-list enqueue | O(1) | O(1) |
+| Waiting-list processing | O(w) | O(w) |
+| Cancellation stack push/top/pop | O(1) | O(1) |
+| Complete undo cancellation | O(n + w + r) | O(n + w) |
+| Linear search (Option 6) | O(n) | O(1) |
+| Merge sort (Option 7) | O(r log r) | O(r) |
+| Active reservation statistics | O(n) | O(1) |
+| Resource utilization report | O(r * n) | O(1) |
+| Most requested resources report | O(r * (n + w)) | O(w) |
+| Waiting-list statistics | O(w log w) | O(w) |
