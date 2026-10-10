@@ -13,6 +13,8 @@ private:
 public:
     bool loadResources(const std::string& filename);
     void displayResources() const;
+    const std::vector<Resource>& getResources() const;
+    void sortResourcesByName();
     Resource* findResource(const std::string& resourceID);
     bool updateAvailability(const std::string& resourceID,
                             const std::string& status);

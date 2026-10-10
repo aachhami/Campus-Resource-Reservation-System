@@ -130,28 +130,36 @@ int main() {
 
         case 6:
 
-            std::cout
-                << "\nSearch Reservations will be implemented "
-                << "for the final project.\n";
+    std::cout << "\nSearching Reservations...\n";
 
-            break;
+    list.searchReservation();
+
+    break;
 
         case 7:
 
-            std::cout
-                << "\nSort Resources will be implemented "
-                << "for the final project.\n";
+    std::cout << "\nSorting Resources...\n";
 
-            break;
+    resourceManager.sortResourcesByName();
 
-        case 8:
+    break;
 
-            std::cout
-                << "\nGenerate Report will be implemented "
-                << "for the final project.\n";
+       case 8:
+    std::cout << "\n========== SYSTEM REPORT ==========\n";
 
-            break;
+    list.displayReservationStatistics();
 
+    list.displayResourceUtilization(resourceManager);
+
+    list.displayMostRequestedResources(
+        resourceManager, waitingList
+    );
+
+    waitingList.displayWaitingStatistics();
+
+    std::cout << "\n========== END OF REPORT ==========\n";
+    break;
+    
         case 9:
 
             std::cout

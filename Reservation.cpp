@@ -3,6 +3,7 @@
 #include "WaitingList.h"
 #include "CancellationHistory.h"
 #include "include/ResourceManager.h"
+#include <vector>
 
 #include <cstdio>
 #include <fstream>
@@ -179,6 +180,39 @@ void reservationList::getReserv() {
             date
         );
     }
+}
+
+// Linear search for an active reservation by its ID.
+void reservationList::searchReservation() {
+
+    std::string reservationID;
+
+    std::cout << "\nEnter Reservation ID to search: ";
+    std::cin >> reservationID;
+
+    reservation* result = findReservation(reservationID);
+
+    if (result == nullptr) {
+        std::cout << "\nReservation not found.\n";
+        return;
+    }
+
+    std::cout << "\n===== Reservation Found =====\n";
+
+    std::cout << "Reservation ID: "
+              << result->ReservationID << '\n';
+
+    std::cout << "Student ID: "
+              << result->StudentID << '\n';
+
+    std::cout << "Student Name: "
+              << result->StudentName << '\n';
+
+    std::cout << "Resource ID: "
+              << result->ResourceID << '\n';
+
+    std::cout << "Reservation Date: "
+              << result->Date << '\n';
 }
 
 bool reservationList::appendReservationToFile(
@@ -696,4 +730,128 @@ reservationList::~reservationList() {
 
     head = nullptr;
     tail = nullptr;
+}
+
+// Reports the total number of active reservations.
+// Traverses the existing doubly linked list without modifying it.
+void reservationList::displayReservationStatistics() const {
+
+    int totalActive = 0;
+
+    reservation* current = head;
+
+    while (current != nullptr) {
+        totalActive++;
+        current = current->next;
+    }
+
+    std::cout << "\n===== Active Reservation Statistics =====\n";
+
+    std::cout << "Total Active Reservations: "
+              << totalActive << '\n';
+
+    if (totalActive == 0) {
+        std::cout << "No active reservations found.\n";
+    }
+}
+
+// Reports active reservation counts for every resource.
+// Uses the existing doubly linked list and resource manager.
+void reservationList::displayResourceUtilization(
+    const ResourceManager& resourceManager) const {
+
+    std::cout << "\n===== Resource Utilization Report =====\n";
+
+    const std::vector<Resource>& resources =
+        resourceManager.getResources();
+
+    if (resources.empty()) {
+        std::cout << "No resources available.\n";
+        return;
+    }
+
+    for (const Resource& resource : resources) {
+
+        int reservationCount = 0;
+        reservation* current = head;
+
+        while (current != nullptr) {
+
+            if (current->ResourceID == resource.getResourceID()) {
+                reservationCount++;
+            }
+
+            current = current->next;
+        }
+
+        std::cout << "Resource ID: "
+                  << resource.getResourceID()
+                  << " | Name: "
+                  << resource.getName()
+                  << " | Active Reservations: "
+                  << reservationCount
+                  << '\n';
+    }
+}
+
+// Identifies the most requested resources.
+// Total requests = active reservations + waiting-list requests.
+void reservationList::displayMostRequestedResources(
+    const ResourceManager& resourceManager,
+    const WaitingList& waitingList) const {
+
+    const std::vector<Resource>& resources =
+        resourceManager.getResources();
+
+    std::cout << "\n===== Most Requested Resources =====\n";
+
+    if (resources.empty()) {
+        std::cout << "No resources available.\n";
+        return;
+    }
+
+    int highestRequests = 0;
+    std::vector<std::string> mostRequested;
+
+    for (const Resource& resource : resources) {
+
+        int activeCount = 0;
+        reservation* current = head;
+
+        while (current != nullptr) {
+            if (current->ResourceID == resource.getResourceID()) {
+                activeCount++;
+            }
+            current = current->next;
+        }
+
+        int waitingCount =
+            waitingList.countWaitingForResource(
+                resource.getResourceID());
+
+        int totalRequests = activeCount + waitingCount;
+
+        if (totalRequests > highestRequests) {
+            highestRequests = totalRequests;
+            mostRequested.clear();
+            mostRequested.push_back(
+                resource.getResourceID() + " - " + resource.getName());
+        }
+        else if (totalRequests == highestRequests && totalRequests > 0) {
+            mostRequested.push_back(
+                resource.getResourceID() + " - " + resource.getName());
+        }
+    }
+
+    if (highestRequests == 0) {
+        std::cout << "No resource requests found.\n";
+        return;
+    }
+
+    std::cout << "Highest Number of Requests: "
+              << highestRequests << '\n';
+
+    for (const std::string& resource : mostRequested) {
+        std::cout << "Resource: " << resource << '\n';
+    }
 }
