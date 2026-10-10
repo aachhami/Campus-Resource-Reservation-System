@@ -224,7 +224,26 @@ The following tests were performed on the final project:
 
 All final-project tests listed above were performed locally using WSL.
 
-Final-project compilation and execution on UNT CELL are still pending verification.
+### UNT CELL Testing — October 10, 2026
+
+The final project was compiled and executed successfully on
+the University of North Texas CSE CELL server (cell01-cse).
+
+The following tests passed:
+
+- Compiled successfully using g++ with C++17.
+- Launched the application and displayed all nine menu options.
+- Linear search found existing reservation ID 301.
+- Linear search correctly handled nonexistent reservation ID 999.
+- Merge sort arranged all 20 resources alphabetically by name.
+- Generated reports showing 20 active reservations.
+- Displayed resource utilization for all 20 resources.
+- Added a test request for unavailable resource R103 to the waiting list.
+- Updated the report to show R103 as the most requested resource with 3 requests.
+- Displayed 1 waiting student for R103.
+- Exited the application successfully.
+
+All tests listed above passed on UNT CELL.
 
 
 ## Complexity Analysis
