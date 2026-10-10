@@ -109,6 +109,15 @@ public:
 
     void displayReserv();
 
+    void displayReservationStatistics() const;
+
+    void displayResourceUtilization(const ResourceManager& resourceManager) const;
+
+    void displayMostRequestedResources(
+    const ResourceManager& resourceManager,
+    const WaitingList& waitingList
+) const;
+
     void getReserv();
 
     void searchReservation();

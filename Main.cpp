@@ -144,14 +144,22 @@ int main() {
 
     break;
 
-        case 8:
+       case 8:
+    std::cout << "\n========== SYSTEM REPORT ==========\n";
 
-            std::cout
-                << "\nGenerate Report will be implemented "
-                << "for the final project.\n";
+    list.displayReservationStatistics();
 
-            break;
+    list.displayResourceUtilization(resourceManager);
 
+    list.displayMostRequestedResources(
+        resourceManager, waitingList
+    );
+
+    waitingList.displayWaitingStatistics();
+
+    std::cout << "\n========== END OF REPORT ==========\n";
+    break;
+    
         case 9:
 
             std::cout

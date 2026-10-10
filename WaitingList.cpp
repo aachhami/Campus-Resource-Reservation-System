@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <stdexcept>
+#include <map>
 
 WaitingList::WaitingList() {
 }
@@ -156,4 +157,57 @@ void WaitingList::displayList() const {
 
         temp.pop();
     }
+}
+
+// Reports the number of waiting requests for each resource.
+// A copy of the queue preserves the original FIFO order.
+void WaitingList::displayWaitingStatistics() const {
+
+    std::queue<reservation> temp = waitingQueue;
+
+    if (temp.empty()) {
+        std::cout << "\nNo students are currently waiting.\n";
+        return;
+    }
+
+    std::map<std::string, int> counts;
+
+    while (!temp.empty()) {
+        counts[temp.front().ResourceID]++;
+        temp.pop();
+    }
+
+    std::cout << "\n===== Waiting List Statistics =====\n";
+
+    int total = 0;
+
+    for (const auto& entry : counts) {
+        std::cout << "Resource ID: " << entry.first
+                  << " | Students Waiting: " << entry.second
+                  << '\n';
+
+        total += entry.second;
+    }
+
+    std::cout << "Total Waiting Requests: " << total << '\n';
+}
+
+// Counts waiting requests for a specific resource.
+// Copies the queue to preserve the original FIFO order.
+int WaitingList::countWaitingForResource(
+    const std::string& resourceID) const {
+
+    std::queue<reservation> temp = waitingQueue;
+    int count = 0;
+
+    while (!temp.empty()) {
+
+        if (temp.front().ResourceID == resourceID) {
+            count++;
+        }
+
+        temp.pop();
+    }
+
+    return count;
 }

@@ -172,3 +172,7 @@ bool ResourceManager::updateAvailability(
     resource->setAvailability(status);
     return true;
 }
+// Provides read-only access to resources for reporting.
+const std::vector<Resource>& ResourceManager::getResources() const {
+    return resources;
+}

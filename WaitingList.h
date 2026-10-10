@@ -37,4 +37,6 @@ public:
     );
 
     void displayList() const;
+    void displayWaitingStatistics() const;
+    int countWaitingForResource(const std::string& resourceID) const;
 };
